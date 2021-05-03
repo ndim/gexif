@@ -19,15 +19,20 @@ Building from the source tar ball usually involves the commands:
   sudo make install
 
 When building from source out of git, please run "autoreconf -i" first.
-If xgettext complains about non-ASCII strings in code, make sure
-po/Makevars.template wasn't overwritten.
 
 
 NOTE TO PACKAGERS
 =================
 
-The default is to build gexif with gtk2 (minimum version of gtk2: 2.6).
-The configure option --with-gtk3 allows building gexif with gtk3.
+If libexif-gtk (with gtk2) is available at build time, gexif will be
+built as gexif-gtk2.
+
+If libexif-gtk3 is available at build time, gexif will be built as
+gexif-gtk3.
+
+"make install" will install as ${bindir}/gexif the built gexif-gtk3
+executable if it has been built, or the gexif-gtk2 executable
+otherwise.
 
 
 LINKS

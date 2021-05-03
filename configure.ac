@@ -42,19 +42,22 @@ GP_GETTEXT_FLAGS()
 # ---------------------------------------------------------------------------
 # conditional libraries
 # ---------------------------------------------------------------------------
-AC_ARG_WITH([gtk3],
-            [AS_HELP_STRING([--with-gtk3],[build with gtk3 (default is gtk2)])],
-            [gtk_version=gtk3],
-            [gtk_version=gtk2])
+PKG_CHECK_MODULES([LIBEXIF_GTK2], [libexif-gtk >= 0.3.3],
+                  [have_libexif_gtk2=yes], [have_libexif_gtk2=no])
+PKG_CHECK_MODULES([LIBEXIF_GTK3], [libexif-gtk3 >= 0.3.3],
+                  [have_libexif_gtk3=yes], [have_libexif_gtk3=no])
 
-GP_CHECK_LIBRARY([LIBEXIF], [libexif])
-AS_VAR_IF([gtk_version], [gtk3], [dnl
-  GP_CHECK_LIBRARY([GTK], [gtk+-3.0])dnl
-  GP_CHECK_LIBRARY([LIBEXIF_GTK], [libexif-gtk3],[>= 0.3.3])
-], [dnl
-  GP_CHECK_LIBRARY([GTK], [gtk+-2.0], [>= 2.6])dnl
-  GP_CHECK_LIBRARY([LIBEXIF_GTK], [libexif-gtk],[>= 0.3.3])
-])
+dnl Note that all dependent library flags for gtk+-2.0, gtk+-3.0,
+dnl libexif, etc. will be pulled in indirectly LIBEXIF_GTK2_* and
+dnl LIBEXIF_GTK3_*, so we do not need to explicitly check for these
+dnl other libraries here.
+
+AM_CONDITIONAL([HAVE_LIBEXIF_GTK2], [test "x$have_libexif_gtk2" = xyes])
+AM_CONDITIONAL([HAVE_LIBEXIF_GTK3], [test "x$have_libexif_gtk3" = xyes])
+
+AS_IF([test "x$have_libexif_gtk2" = xyes], [],
+      [test "x$have_libexif_gtk3" = xyes], [],
+      [AC_MSG_ERROR([pkg-config must find at least one of libexif-gtk, libexif-gtk3.])])
 
 
 # ---------------------------------------------------------------------------
